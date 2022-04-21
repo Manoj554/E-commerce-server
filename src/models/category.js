@@ -19,6 +19,11 @@ const categorySchema = new mongoose.Schema({
         default: 'inactive',
         required: true
     },
+    level: {
+        type: Number,
+        required: true,
+        default: 1
+    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'seller-user',

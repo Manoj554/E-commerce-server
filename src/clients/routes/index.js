@@ -1,9 +1,13 @@
 import express from "express";
+import auth from './auth.js';
+import category from './category.js';
+import product from "./product.js";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-    res.send("Hello From Client server");
-});
+router.use('/auth', auth);
+router.use('/category', category);
+router.use('/product', product);
+
 
 export default router;

@@ -11,7 +11,7 @@ const createCategoryList = (categories) => {
         let category = {
             id: cate._id,
             name: cate.name,
-            categoryImage: cate?.categoryImage,
+            // categoryImage: cate?.categoryImage,
             parentName: 'root',
             status: cate.status,
             did: ++rid
@@ -24,7 +24,7 @@ const createCategoryList = (categories) => {
             let childcategory = {
                 id: childCat._id,
                 name: childCat.name,
-                categoryImage: cate?.categoryImage,
+                // categoryImage: cate?.categoryImage,
                 parentId: childCat?.parentId,
                 parentName: cate.name,
                 status: childCat.status,
@@ -35,6 +35,35 @@ const createCategoryList = (categories) => {
     }
     if (childList.length > 0) {
         List = [...List, ...childList];
+    }
+    return List;
+}
+
+const createCategoryLists = (categories, parentId = null, parentName = null) => {
+    let List = [], category;
+
+    if (parentId == null) {
+        category = categories.filter(val => val.parentId == undefined);
+    } else {
+        category = categories.filter(val => val.parentId == parentId);
+    }
+
+    if (category.length == 0) {
+        return [];
+    }
+
+    for (let cate of category) {
+        let eachCat = {
+            id: cate._id,
+            name: cate.name,
+            parentName: parentName != null ? parentName : 'root',
+            parentId: cate?.parentId,
+            status: cate.status,
+            level: cate.level
+        };
+        List.push(eachCat);
+        let child = createCategoryLists(categories, cate._id, cate.name);
+        List = [...List, ...child];
     }
     return List;
 }
@@ -50,7 +79,9 @@ export const addNewCategory = async (req, res) => {
         };
 
         if (parentId) {
+            let category = await categoryModel.findById(parentId);
             newCategory.parentId = parentId;
+            newCategory.level = category.level + 1;
         }
         if (categoryImage) {
             newCategory.categoryImage = categoryImage;
@@ -58,7 +89,7 @@ export const addNewCategory = async (req, res) => {
 
         await categoryModel.create(newCategory);
         const allCat = await categoryModel.find({});
-        const categories = createCategoryList(allCat);
+        const categories = createCategoryLists(allCat);
         res.status(201).json({ msg: 'new category added', categories });
 
     } catch (error) {
@@ -73,7 +104,7 @@ export const addNewCategory = async (req, res) => {
 export const getAllCategory = async (req, res) => {
     try {
         const allCat = await categoryModel.find({});
-        const categories = createCategoryList(allCat);
+        const categories = createCategoryLists(allCat);
         res.status(200).json({ categories, msg: 'categories found' });
     } catch (error) {
         console.log(error);
@@ -86,7 +117,7 @@ export const deleteCategory = async (req, res) => {
     try {
         await categoryModel.deleteMany({ $or: [{ _id: id }, { parentId: id }] });
         const allCat = await categoryModel.find({});
-        const categories = createCategoryList(allCat);
+        const categories = createCategoryLists(allCat);
         res.status(200).json({ msg: 'category deleted successfully', categories });
     } catch (error) {
         console.log(error);
@@ -119,7 +150,7 @@ export const editCategory = async (req, res) => {
             categoryImage
         });
         const allCat = await categoryModel.find({});
-        const categories = createCategoryList(allCat);
+        const categories = createCategoryLists(allCat);
         res.status(200).json({ msg: 'category updated successfully', categories });
     } catch (error) {
         console.log(error);

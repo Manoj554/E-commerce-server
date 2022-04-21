@@ -13,7 +13,7 @@ export const validateSignup = [
 ];
 
 export const validateSignin = [
-    check('user').notEmpty().withMessage('Please provide email or password'),
+    check('user').notEmpty().withMessage('Please provide email or phone number'),
     check('password').notEmpty().withMessage('Password is required'),
 ];
 
