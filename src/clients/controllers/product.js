@@ -1,7 +1,7 @@
 import categoryModel from "../../models/category.js";
 import productModel from "../../models/product.js";
 
-const createProductList = (products) => {
+export const createProductList = (products) => {
     let myProduct = [];
     for (let prod of products) {
         let product = {
@@ -84,18 +84,6 @@ export const getAllProduct = async (req, res) => {
     }
 }
 
-export const searchProductsByCategory = async (req, res) => {
-    const { query } = req.query;
-    try {
-        const regex = new RegExp(query, 'i');
-        const products = await productModel.find({ category: regex }).sort({ "updatedAt": -1 }).sort({ "createdAt": -1 });
-        res.status(200).json({ products });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ msg: 'internal server error' });
-    }
-}
-
 export const filterProductsByCategory = async (req, res) => {
     const ids = req.body.ids;
 
@@ -128,5 +116,43 @@ export const filterProductsBySubRootCategory = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ msg: 'server error' });
+    }
+}
+
+export const searchSuggestion = async (req, res) => {
+    const { query } = req.query;
+    try {
+        const regex = new RegExp(query, 'i');
+        let products = await productModel.find({ name: regex }).sort({ "updatedAt": -1 }).sort({ "createdAt": -1 }).limit(5);
+        products = products.map(val => val.name);
+        res.status(200).json({ products });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: 'internal server error' });
+    }
+}
+
+export const searchByName = async (req, res) => {
+    const { query } = req.query;
+    try {
+        const regex = new RegExp(query, 'i');
+        let products = await productModel.find({ name: regex });
+        products = createProductList(products);
+        res.status(200).json({ products });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: 'internal server error' });
+    }
+}
+
+export const getProductInfo = async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const product = await productModel.findById(id);
+        res.status(200).json({ product });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: 'internal server error' });
     }
 }

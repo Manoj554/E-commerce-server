@@ -77,3 +77,39 @@ export const signout = (req, res) => {
     res.clearCookie('token');
     res.status(200).json({ msg: 'successfully loggedout' });
 }
+
+export const getAllAddress = async (req, res) => {
+    try {
+        const findUser = await userModel.findById(req.id);
+        let addresses = findUser.addresses;
+        console.log(addresses);
+        if (addresses) {
+            res.status(200).json({ addresses, msg: 'addresses found' });
+        } else {
+            res.status(200).json({ addresses: [], msg: 'address is empty' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error, msg: 'Internal server error' });
+    }
+}
+
+export const addNewAddress = async (req, res) => {
+    const { name, phone, address, city, pincode, altPhone, email } = req.body;
+
+    try {
+        await userModel.findByIdAndUpdate(req.id, {
+            $push: {
+                addresses: {
+                    name, phone, email, address, city, altPhone, pincode
+                }
+            }
+        });
+        const findUser = await userModel.findById(req.id);
+        let addresses = findUser.addresses;
+        res.status(201).json({ addresses, msg: 'new address added' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error, msg: 'Internal server error' });
+    }
+}

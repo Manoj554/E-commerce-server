@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import userModel from '../models/user';
+import userModel from '../models/user.js';
 
 const userAuthentication = async (req, res, next) => {
     const token = req.headers.authorization;
@@ -9,6 +9,7 @@ const userAuthentication = async (req, res, next) => {
             const findUser = await userModel.findById(decode.id);
             if (findUser) {
                 req.user = findUser;
+                req.id = findUser._id;
                 next();
             } else {
                 return res.status(401).json({ msg: 'User not found' });

@@ -19,6 +19,17 @@ const userSchema = new mongoose.Schema({
     hash_passwword: {
         type: String
     },
+    addresses: [
+        {
+            name: String,
+            phone: Number,
+            email: String,
+            address: String,
+            city: String,
+            altPhone: String,
+            pincode: Number
+        },
+    ],
     profilePicture: String
 }, { timestamps: true });
 
