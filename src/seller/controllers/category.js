@@ -1,43 +1,6 @@
+import mongoose from "mongoose";
 import slugify from "slugify";
 import categoryModel from "../../models/category.js";
-
-const createCategoryList = (categories) => {
-    let List = [], childList = [], rootCategory, childCategory;
-    let rid = 0;
-
-    rootCategory = categories.filter(val => val.parentId == undefined);
-    let cid = rootCategory.length;
-    for (let cate of rootCategory) {
-        let category = {
-            id: cate._id,
-            name: cate.name,
-            // categoryImage: cate?.categoryImage,
-            parentName: 'root',
-            status: cate.status,
-            did: ++rid
-        };
-        List.push(category);
-
-        childCategory = categories.filter(val => val.parentId == cate._id);
-
-        for (let childCat of childCategory) {
-            let childcategory = {
-                id: childCat._id,
-                name: childCat.name,
-                // categoryImage: cate?.categoryImage,
-                parentId: childCat?.parentId,
-                parentName: cate.name,
-                status: childCat.status,
-                did: ++cid
-            };
-            childList.push(childcategory);
-        }
-    }
-    if (childList.length > 0) {
-        List = [...List, ...childList];
-    }
-    return List;
-}
 
 const createCategoryLists = (categories, parentId = null, parentName = null) => {
     let List = [], category;
@@ -105,6 +68,18 @@ export const getAllCategory = async (req, res) => {
     try {
         const allCat = await categoryModel.find({});
         const categories = createCategoryLists(allCat);
+        res.status(200).json({ categories, msg: 'categories found' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: 'something went wrong' });
+    }
+}
+
+export const getCategoryBelongsToUser = async (req, res) => {
+    try {
+        let id = req.id.toString();
+        let categories = await categoryModel.find({ createdBy: id });
+        categories = createCategoryLists(categories);
         res.status(200).json({ categories, msg: 'categories found' });
     } catch (error) {
         console.log(error);

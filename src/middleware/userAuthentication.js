@@ -7,6 +7,7 @@ const userAuthentication = async (req, res, next) => {
         try {
             const decode = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
             const findUser = await userModel.findById(decode.id);
+
             if (findUser) {
                 req.user = findUser;
                 req.id = findUser._id;
