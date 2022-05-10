@@ -3,11 +3,12 @@ import userModel from '../models/user.js';
 
 const userAuthentication = async (req, res, next) => {
     const token = req.headers.authorization;
+    console.log(token);
     if (token) {
         try {
             const decode = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
             const findUser = await userModel.findById(decode.id);
-
+            console.log(token);
             if (findUser) {
                 req.user = findUser;
                 req.id = findUser._id;

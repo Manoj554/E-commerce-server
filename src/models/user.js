@@ -26,7 +26,11 @@ const userSchema = new mongoose.Schema({
             address: String,
             city: String,
             altPhone: String,
-            pincode: Number
+            pincode: Number,
+            deliveryType: {
+                type: String,
+                default: "home"
+            }
         },
     ],
     profilePicture: String

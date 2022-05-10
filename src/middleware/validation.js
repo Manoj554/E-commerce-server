@@ -36,6 +36,16 @@ export const validateAddProduct = [
 
 ];
 
+export const validateAddAddress = [
+    check('name').notEmpty().withMessage('Name is required'),
+    check('phone').notEmpty().withMessage('Phone is required'),
+    check('address').notEmpty().withMessage('Address field is required'),
+    check('city').notEmpty().withMessage('City is required'),
+    check('pincode').notEmpty().withMessage('Pincode is required'),
+    check('phone').isMobilePhone().isLength({ min: 10, max: 10 }).withMessage('Please provide valid phone number'),
+    check('pincode').isNumeric().isLength({ min: 6, max: 6 }).withMessage('Please provide proper pincode'),
+];
+
 export const isValidate = (req, res, next) => {
     const errors = validationResult(req);
     if (errors.array().length > 0) {

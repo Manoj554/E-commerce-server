@@ -82,7 +82,6 @@ export const getAllAddress = async (req, res) => {
     try {
         const findUser = await userModel.findById(req.id);
         let addresses = findUser.addresses;
-        console.log(addresses);
         if (addresses) {
             res.status(200).json({ addresses, msg: 'addresses found' });
         } else {
@@ -95,13 +94,13 @@ export const getAllAddress = async (req, res) => {
 }
 
 export const addNewAddress = async (req, res) => {
-    const { name, phone, address, city, pincode, altPhone, email } = req.body;
+    const { name, phone, address, city, pincode, altPhone, email, deliveryType } = req.body;
 
     try {
         await userModel.findByIdAndUpdate(req.id, {
             $push: {
                 addresses: {
-                    name, phone, email, address, city, altPhone, pincode
+                    name, phone, email, address, city, altPhone, pincode, deliveryType
                 }
             }
         });
