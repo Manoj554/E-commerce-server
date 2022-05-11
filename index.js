@@ -22,6 +22,10 @@ app.use(cookieParser());
 app.use("/seller", sellerRoute);
 app.use("/", clientRoutes);
 
+app.get('/', (req, res) => {
+    res.status(200).json({ msg: `server is running fine` });
+});
+
 mongoose.connect(MONGO_URI)
     .then(res => console.log(`connection successfull with ${res.connection.host}`))
     .catch(err => console.log(`Opps Can't connect with Database\n ${err}`));
