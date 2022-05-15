@@ -35,6 +35,9 @@ export const addNewCategory = async (req, res) => {
     const { categoryName, parentId, categoryImage } = req.body;
 
     try {
+        if (!parentId) {
+            return res.status(400).json({ msg: 'parentId is Required' });
+        }
         const newCategory = {
             name: categoryName,
             slug: slugify(categoryName, { replacement: '_', lower: true }),
@@ -46,6 +49,7 @@ export const addNewCategory = async (req, res) => {
             newCategory.parentId = parentId;
             newCategory.level = category.level + 1;
         }
+
         if (categoryImage) {
             newCategory.categoryImage = categoryImage;
         }
