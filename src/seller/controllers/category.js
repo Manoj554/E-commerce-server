@@ -61,7 +61,7 @@ export const addNewCategory = async (req, res) => {
 
     } catch (error) {
         if (error.code === 11000) {
-            return res.status(400).json({ msg: 'duplicate category are allowed' });
+            return res.status(400).json({ msg: 'duplicate categories are not allowed' });
         }
         console.log(error);
         res.status(500).json({ msg: 'internal server error' });

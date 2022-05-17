@@ -112,3 +112,38 @@ export const addNewAddress = async (req, res) => {
         res.status(500).json({ error, msg: 'Internal server error' });
     }
 }
+
+export const signInWithGoogle = async (req, res) => {
+    const { name, email, phone, profilePicture } = req.body;
+
+    try {
+        const findEmail = await userModel.findOne({ email });
+
+        if (!findEmail) {
+            let newUser = {
+                name, email, userType: 'google'
+            };
+
+            if (phone) {
+                newUser.phoneNumber = phone;
+            }
+
+            if (profilePicture) {
+                newUser.profilePicture = profilePicture;
+            }
+
+            await userModel.create(newUser);
+        }
+
+        const userData = {
+            name: findEmail ? findEmail.name : name,
+            email: findEmail ? findEmail.email : email,
+            phone: findEmail ? findEmail.phoneNumber : phone,
+        };
+        res.status(200).json({ user: userData, msg: 'login successful' });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: 'internal server error' });
+    }
+}

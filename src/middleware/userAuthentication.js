@@ -3,12 +3,10 @@ import userModel from '../models/user.js';
 
 const userAuthentication = async (req, res, next) => {
     const token = req.headers.authorization;
-    console.log(token);
     if (token) {
         try {
             const decode = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
             const findUser = await userModel.findById(decode.id);
-            console.log(token);
             if (findUser) {
                 req.user = findUser;
                 req.id = findUser._id;
@@ -21,7 +19,7 @@ const userAuthentication = async (req, res, next) => {
             return res.status(401).json({ msg: 'Authorization Required' });
         }
     } else {
-        return res.status(401).json({ msg: 'Please Login to Continue' });
+        return res.status(422).json({ msg: 'Please Login to Continue' });
     }
 }
 

@@ -18,6 +18,11 @@ const userSchema = new mongoose.Schema({
     hash_passwword: {
         type: String
     },
+    userType: {
+        type: String,
+        enum: ['email', 'google'],
+        default: 'email'
+    },
     addresses: [
         {
             name: String,
@@ -32,6 +37,9 @@ const userSchema = new mongoose.Schema({
                 default: "home"
             }
         },
+    ],
+    myOrders: [
+
     ],
     profilePicture: String
 }, { timestamps: true });
